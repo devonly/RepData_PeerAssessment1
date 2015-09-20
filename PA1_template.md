@@ -319,6 +319,7 @@ colnames(Average_Steps_Per_Interval_And_Weekday) <- c("Interval", "Weekday", "St
 plot1 <- ggplot( data = Average_Steps_Per_Interval_And_Weekday, aes( x     = Interval, y   = Steps,
                                                                      group = Weekday , col = Weekday))
 plot1 <- plot1 + labs( y = "Average Steps")
+plot1 <- plot1 + facet_wrap( ~ Weekday)
 plot1 <- plot1 + geom_line()
 
 print(plot1)
