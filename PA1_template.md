@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 # By Devon Ly
 
@@ -11,17 +6,18 @@ output:
 
 #### A1. Unzip, load CSV file into a data frame and load additional packages
 
-```{r, echo=TRUE}
+
+```r
 library(ggplot2)                                                        # Use ggplot2 as our plotting system
 
 unzip("activity.zip")                                                   # Unzip file
 Activity_Data <- read.csv( "activity.csv", colClasses = "character" )   # Read CSV file
-                                      
 ```
 
 #### A2. Process and transform data in preparation for analysis
 
-```{r}
+
+```r
 Activity_Data$steps    <- as.numeric(Activity_Data$steps)               # Convert character to number
 Activity_Data$date     <- as.Date(Activity_Data$date)                   # Convert character to date
 Activity_Data$interval <- as.numeric(Activity_Data$interval)            # Convert character to number
@@ -31,13 +27,15 @@ Activity_Data$interval <- as.numeric(Activity_Data$interval)            # Conver
 
 #### B1. Calculate total number of steps taken per day using the aggregate function
 
-```{r}
+
+```r
 Steps_Per_Day <- aggregate( steps ~ date, data = Activity_Data, FUN = sum )
 ```
 
 #### B2. Generate histogram of total number of steps taken each day
 
-```{r}
+
+```r
 # Divide the steps range into 30 bin
 bin_size <- max(Steps_Per_Day$steps) / 30   
 
@@ -60,25 +58,38 @@ plot1 <- plot1 + geom_bar(
 print(plot1)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
 #### B3. What is the mean steps taken per day?
 
-```{r}
+
+```r
 original_mean <- mean(Steps_Per_Day$steps, na.rm = TRUE)   # Calculate mean ignoring missing values
 original_mean
 ```
 
+```
+## [1] 10766.19
+```
+
 #### B4. What is the median steps taken per day?
 
-```{r}
+
+```r
 original_median <- median(Steps_Per_Day$steps, na.rm = TRUE) # Calculate median ignoring missing values
 original_median
+```
+
+```
+## [1] 10765
 ```
 
 ## C. What is the average daily activity pattern?
 
 ##### C1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-```{r}
+
+```r
 # Generate a data frame of average step by interval
 Average_Steps_Per_Interval <- aggregate( steps ~ interval, data = Activity_Data, FUN = mean)
 
@@ -90,10 +101,17 @@ plot1 <- plot1 + geom_line(col = "red")
 print(plot1)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+
 #### C2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 Average_Steps_Per_Interval[ Average_Steps_Per_Interval$steps == max(Average_Steps_Per_Interval$steps), 1]
+```
+
+```
+## [1] 835
 ```
 
 ## D. Imputing missing values
@@ -102,14 +120,20 @@ Average_Steps_Per_Interval[ Average_Steps_Per_Interval$steps == max(Average_Step
 
 #### D1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
-```{r}
+
+```r
 nrow(Activity_Data[ is.na( Activity_Data$steps), ])
+```
+
+```
+## [1] 2304
 ```
 
 #### D2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 #### D3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
-```{r}
+
+```r
 # Merge original data set with our calculated data set containing average steps
 Imputed_Data <- merge( 
                         Activity_Data, 
@@ -124,7 +148,8 @@ Imputed_Data$steps_x[ is.na(Imputed_Data$steps_x)] <- Imputed_Data$steps_y[ is.n
 
 
 #### D4. Make a histogram of the total number of steps taken each day and Calculate
-```{r}
+
+```r
 # Calculate steps per day from imputed data
 Imputed_Steps_Per_Day <- aggregate( steps_x ~ date, data = Imputed_Data, FUN = sum )
 
@@ -150,27 +175,53 @@ plot1 <- plot1 + geom_bar(
 print(plot1)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-11-1.png) 
+
 #### and report the mean and median total number of steps taken per day.
 
 The mean using imputed data is
-```{r}
+
+```r
 imputed_mean   <- mean(Imputed_Steps_Per_Day$steps_x)     # Calculate mean 
 imputed_mean
 ```
 
+```
+## [1] 10766.19
+```
+
 The median using imputed data is
-```{r}
+
+```r
 imputed_median <- median(Imputed_Steps_Per_Day$steps_x)   # Calculate median
 imputed_median
+```
+
+```
+## [1] 10766.19
 ```
 
 #### Do these values differ from the estimates from the first part of the assignment?
 
 #### Difference with the mean value
-```{r}
-paste( "The Mean when NA values ARE NOT imputed = ", original_mean )
-paste( "The Mean when NA values ARE imputed is  = ", imputed_mean )
 
+```r
+paste( "The Mean when NA values ARE NOT imputed = ", original_mean )
+```
+
+```
+## [1] "The Mean when NA values ARE NOT imputed =  10766.1886792453"
+```
+
+```r
+paste( "The Mean when NA values ARE imputed is  = ", imputed_mean )
+```
+
+```
+## [1] "The Mean when NA values ARE imputed is  =  10766.1886792453"
+```
+
+```r
 if ( imputed_mean == original_mean)
 {
   print("The imputed mean does not differ from the mean from original data set")
@@ -183,11 +234,29 @@ if ( imputed_mean == original_mean)
 }
 ```
 
-#### Difference with the median value
-```{r}
-paste( "The Median when NA values ARE NOT imputed = ", original_median )
-paste( "The Median when NA values ARE imputed is  = ", imputed_median )
+```
+## [1] "The imputed mean does not differ from the mean from original data set"
+```
 
+#### Difference with the median value
+
+```r
+paste( "The Median when NA values ARE NOT imputed = ", original_median )
+```
+
+```
+## [1] "The Median when NA values ARE NOT imputed =  10765"
+```
+
+```r
+paste( "The Median when NA values ARE imputed is  = ", imputed_median )
+```
+
+```
+## [1] "The Median when NA values ARE imputed is  =  10766.1886792453"
+```
+
+```r
 if ( imputed_median == original_median)
 {
   print("The imputed median does not differ from the mean from original data set")
@@ -200,11 +269,16 @@ if ( imputed_median == original_median)
 }
 ```
 
+```
+## [1] "There is difference as the imputed median is greater than the original median value"
+```
+
 #### What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 The data and plot below suggest that there no impact on daily number of steps.
 
-```{r}
+
+```r
 # Calculate the difference between the imputed total steps per day and the original steps per day
 Difference_In_Steps_Per_Day <- merge(Steps_Per_Day, Imputed_Steps_Per_Day, by = "date")
 Difference_In_Steps_Per_Day$step_diff <-
@@ -218,9 +292,12 @@ plot1 <- plot1 + labs( x = "Date", y = "Difference In Steps Per Day",
 print(plot1)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
+
 ## E. Are there differences in activity patterns between weekdays and weekends?
 
-```{r}
+
+```r
 # Create a factor to distinguish between weekday and weekend
 Imputed_Data$WeekDay <- as.factor(
                                     ifelse(
@@ -247,8 +324,11 @@ plot1 <- plot1 + geom_line()
 print(plot1)
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-17-1.png) 
 
-```{r}
+
+
+```r
 # Delete file which we unzipped at the start
 unlink("activity.csv")
 ```
